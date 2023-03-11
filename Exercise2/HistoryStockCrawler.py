@@ -70,10 +70,8 @@ def insertsql():
     try:
         conn = pymssql.connect(**db_settings)
         with conn.cursor() as cursor:
-             command ="INSERT INTO [dbo].[historyPriceInfo] (stock_code, date, tv, t, o, h, l, c, d, v) VALUES (\'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\')"
-             print(info)
-             print(command % ())
-             cursor.execute(command % (info['c'], info['d'], info['t'], float(info['tv'])*1000, 0, info['o'], info['h'], info['i'], float(info['z']), float(info['z_minus_y']), 0))
+             command ="INSERT INTO [dbo].[historyPriceInfo] (stock_code, date, tv, t, o, h, l, c, d, v) VALUES (\'%s\', \'%s\', \'%s\', \'%s\', %f, %f, %f, %f, %f, \'%s\')"
+             cursor.execute(command % (priceInfo['stock_code'], priceInfo['date'], priceInfo['tv'], priceInfo['t'], priceInfo['o'], priceInfo['h'], priceInfo['l'], priceInfo['c'], priceInfo['d'], priceInfo['v']))
         conn.commit()
         conn.close()
     except Exception as e:
@@ -97,11 +95,10 @@ for stock_code in stock_codes:
             date = "%d%02d01" % (year, month)
             url = url_format % (date, stock_code)
             findHistoryPriceInfo(url, stock_code)
-            output()
             i+=1
-            print(i)
             time.sleep(15)
 print(i)
+insertsql()
 
 #print(datetime.today().strftime('%Y%m%d'))
 
