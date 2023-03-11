@@ -49,16 +49,22 @@ def findHistoryPriceInfo(url, stock_code):
     for info in info_list:
         priceInfo = {}
         priceInfo['stock_code'] = stock_code
-        priceInfo['date'] = info[0]
-        priceInfo['tv'] = info[1]
-        priceInfo['t'] = info[2]
-        priceInfo['o'] = info[3]
-        priceInfo['h'] = info[4]
-        priceInfo['l'] = info[5]
-        priceInfo['c'] = info[6]
-        priceInfo['d'] = info[7]
-        priceInfo['v'] = info[8]
+        priceInfo['date'] = date_transfer(info[0])
+        priceInfo['tv'] = info[1].replace(',', '')
+        priceInfo['t'] = info[2].replace(',', '')
+        priceInfo['o'] = float(info[3].replace(',', ''))
+        priceInfo['h'] = float(info[4].replace(',', ''))
+        priceInfo['l'] = float(info[5].replace(',', ''))
+        priceInfo['c'] = float(info[6].replace(',', ''))
+        priceInfo['d'] = float(info[7].replace(',', '')) if info[7] != 'X0.00' else 0
+        priceInfo['v'] = info[8].replace(',', '')
         historyPriceInfo.append(priceInfo)
+
+def date_transfer(date):
+    date_arr = date.split('/')
+    year = str(int(date_arr[0]) + 1911)
+    result = year +'/'+'/'.join(date_arr[1:])
+    return result
 
 def insertsql():
     try:
@@ -74,7 +80,7 @@ def insertsql():
         raise
 
 def output():
-    command ="INSERT INTO [dbo].[historyPriceInfo] (stock_code, date, tv, t, o, h, l, c, d, v) VALUES (\'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\'\n)"
+    command ="INSERT INTO [dbo].[historyPriceInfo] (stock_code, date, tv, t, o, h, l, c, d, v) VALUES (\'%s\', \'%s\', \'%s\', \'%s\', %f, %f, %f, %f, %f, \'%s\')\n"
     with open('tmp.txt', 'w') as f:
         for priceInfo in historyPriceInfo:
             f.write(command % (priceInfo['stock_code'], priceInfo['date'], priceInfo['tv'], priceInfo['t'], priceInfo['o'], priceInfo['h'], priceInfo['l'], priceInfo['c'], priceInfo['d'], priceInfo['v']))
@@ -90,10 +96,12 @@ for stock_code in stock_codes:
         for month in range(1,max_month+1):
             date = "%d%02d01" % (year, month)
             url = url_format % (date, stock_code)
-            findHistoryPriceInfo(url)
-            time.sleep(15)
+            findHistoryPriceInfo(url, stock_code)
+            output()
             i+=1
+            print(i)
+            time.sleep(15)
 print(i)
-output()
+
 #print(datetime.today().strftime('%Y%m%d'))
 
