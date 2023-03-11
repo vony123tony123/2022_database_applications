@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.service import Service
 
 # 這邊是用chrome作為範例，可以依照你使用瀏覽器的習慣做修改
 options = Options()
-chrome = webdriver.Chrome(service=Service('./chromedriver'))
+chrome = webdriver.Chrome(service=Service('../chromedriver'))
 chrome.get('https://www.google.com.tw/')
 
 try:

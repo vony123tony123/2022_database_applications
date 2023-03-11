@@ -27,7 +27,7 @@ def find_Taiwan50():
     options.add_argument("--headless")  # 執行時不顯示瀏覽器
     options.add_argument("--disable-notifications")  # 禁止瀏覽器的彈跳通知
     #options.add_experimental_option("detach", True)  # 爬蟲完不關閉瀏覽器
-    chrome = webdriver.Chrome(service=Service('./chromedriver'))
+    chrome = webdriver.Chrome(service=Service('../chromedriver'))
 
     chrome.get("https://www.cmoney.tw/etf/tw/0050")
 
